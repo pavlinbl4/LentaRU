@@ -1,22 +1,17 @@
 import requests
 import json
-import time
 import datetime
 import os
 from datetime import datetime, timedelta
 
-from get_file_name import file_name
-from get_html import get_html
-
-
-def lenta_ru_time_converter(lenta_ru_time):
-    return datetime.strptime(time.ctime(lenta_ru_time), '%a %b %d %H:%M:%S %Y').strftime('%Y-%m-%d')
+from tools.get_file_name import file_name
+from tools.get_html import get_html
 
 
 def main():
     for day_shift in range(2):
 
-        publication_day = (datetime.now() - timedelta(days=day_shift)).strftime("%Y-%m-%d")
+        # publication_day = (datetime.now() - timedelta(days=day_shift)).strftime("%Y-%m-%d")
 
         autor = "Фото: Евгений Павленко / «Коммерсантъ»"
 
