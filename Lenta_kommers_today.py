@@ -73,21 +73,24 @@ def main():
             if lenta_ru_time_converter(i['pubdate']) == yesterday:  # today:
                 count += 1
                 photograf = i['text'].split('/ Коммерсантъ')[0][6:].strip()
-                image_url = i['image_url']
-                ws.row_dimensions[count].height = 100  # задаю высоту столбца
-                print(photograf, image_url, lenta_ru_time_converter(i['pubdate']))
-                folder = make_subfolder(photograf)
-                image_path = download_image(folder, image_url)
 
-                img = Image(image_path)
-                resize_height = img.height // 3  # уменьшая рарешение в два раза
-                resize_width = img.width // 3  # уменьшая рарешение в два раза
+                # если под фото нед подписи и взята первая строка текста, то пропускаем снимок
+                if len(photograf) < 25:
+                    image_url = i['image_url']
+                    ws.row_dimensions[count].height = 100  # задаю высоту столбца
+                    print(photograf, image_url, lenta_ru_time_converter(i['pubdate']))
+                    folder = make_subfolder(photograf)
+                    image_path = download_image(folder, image_url)
 
-                img.width = resize_width  # устанавливаю размер превью
-                img.height = resize_height  # устанавливаю размер превью
+                    img = Image(image_path)
+                    resize_height = img.height // 3  # уменьшая рарешение в два раза
+                    resize_width = img.width // 3  # уменьшая рарешение в два раза
 
-                ws.add_image(img, f'B{count}')
-                ws[f'A{count}'] = photograf
+                    img.width = resize_width  # устанавливаю размер превью
+                    img.height = resize_height  # устанавливаю размер превью
+
+                    ws.add_image(img, f'B{count}')
+                    ws[f'A{count}'] = photograf
         # print(count)
         if count < 10:
             wb.save(f'{report_folder}/Ъ_in_LentaRU.xlsx')
