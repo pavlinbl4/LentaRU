@@ -2,12 +2,13 @@
 import os
 import requests
 import json
-import time
-import fake_headers
 from openpyxl import Workbook
 from openpyxl.drawing.image import Image
 from openpyxl import load_workbook
 from datetime import datetime, timedelta
+
+from tools.get_html import get_html
+from tools.lenta_ru_time import lenta_ru_time_converter
 
 yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
 report_folder = '/Volumes/big4photo/Documents/Kommersant/LentaRU'
@@ -19,20 +20,6 @@ def notification(message):
     osascript -e 'display notification "{message}" with title "{title}"'
     '''
     os.system(command)
-
-
-def lenta_ru_time_converter(lenta_ru_time):
-    return datetime.strptime(time.ctime(lenta_ru_time), '%a %b %d %H:%M:%S %Y').strftime('%Y-%m-%d')
-
-
-def get_html(url):
-    headers = fake_headers.Headers().generate()
-    r = requests.get(url, headers=headers)
-    if r.status_code != 200:
-        time.sleep(10)
-        print("bad status code")
-        r = requests.get(url, headers=headers)
-    return r.text
 
 
 def make_subfolder(photograf):
