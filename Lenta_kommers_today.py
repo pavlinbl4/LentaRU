@@ -2,16 +2,15 @@
 import os
 import requests
 import json
-from openpyxl import Workbook
 from openpyxl.drawing.image import Image
-from openpyxl import load_workbook
 from datetime import datetime, timedelta
 
+from tools.create_subfolder import create_directory
 from tools.get_html import get_html
 from tools.lenta_ru_time import lenta_ru_time_converter
 
 yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-report_folder = '/Volumes/big4photo/Documents/Kommersant/LentaRU'
+report_folder = 'Users/Documents/Kommersant/LentaRU'
 
 
 def notification(message):
@@ -28,9 +27,9 @@ def make_subfolder(photograf):
     return folder
 
 
-def download_image(folder, image_url):
+def download_image(folder, image_url, photograf, yesterday):
     r = requests.get(image_url)
-    image_name = image_url.split('/')[-1]
+    image_name = f"{yesterday}_{photograf}_{image_url.split('/')[-1]}"
     with open(f"{folder}/{image_name}", 'wb') as download_file:
         for chunk in r.iter_content(9000):
             download_file.write(chunk)
@@ -38,17 +37,6 @@ def download_image(folder, image_url):
 
 
 def main():
-    if os.path.exists('Ъ_in_LentaRU.xlsx'):
-        wb = load_workbook('Ъ_in_LentaRU.xlsx')  # файл есть и открываю его
-        ws = wb.create_sheet(yesterday)  # добавляю новую таблицу
-    else:
-        wb = Workbook()  # если файда еще нет
-        ws = wb.active  # если файда еще нет
-        ws.title = yesterday  # если файда еще нет
-
-    ws.column_dimensions['C'].width = 50  # задаю шрину колонки
-    ws.column_dimensions['A'].width = 30
-    ws.column_dimensions['B'].width = 100
     number = 10
 
     while True:
@@ -64,10 +52,12 @@ def main():
                 # если под фото нед подписи и взята первая строка текста, то пропускаем снимок
                 if len(photograf) < 25:
                     image_url = i['image_url']
-                    ws.row_dimensions[count].height = 100  # задаю высоту столбца
+                    # ws.row_dimensions[count].height = 100  # задаю высоту столбца
                     print(photograf, image_url, lenta_ru_time_converter(i['pubdate']))
-                    folder = make_subfolder(photograf)
-                    image_path = download_image(folder, image_url)
+
+                    # folder = make_subfolder(photograf)
+                    folder = create_directory(f'Kommersant/LentaRU')
+                    image_path = download_image(folder, image_url, photograf, yesterday)
 
                     img = Image(image_path)
                     resize_height = img.height // 3  # уменьшая рарешение в два раза
@@ -76,11 +66,7 @@ def main():
                     img.width = resize_width  # устанавливаю размер превью
                     img.height = resize_height  # устанавливаю размер превью
 
-                    ws.add_image(img, f'B{count}')
-                    ws[f'A{count}'] = photograf
-        # print(count)
         if count < 10:
-            wb.save(f'{report_folder}/Ъ_in_LentaRU.xlsx')
             notification("LentaRu completed")
             break
         number += 10
