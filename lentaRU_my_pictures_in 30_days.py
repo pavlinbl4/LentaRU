@@ -1,7 +1,8 @@
 import requests
 import json
 from tools.create_subfolder import create_directory
-from tools.get_file_name import file_name
+from tools.get_file_name import ImageNamer
+
 from tools.get_html import get_html
 
 
@@ -18,7 +19,7 @@ def main():
 
         for i in rezult['matches']:
             print(i['image_url'])
-            filename = f"{file_name(i['image_url'])}.JPG"
+            filename = f"{ImageNamer().file_name(i['image_url'])}.JPG"
             r = requests.get(i['image_url'])
             with open(f'{path_to_folder}/{filename}', 'wb') as download_file:
                 for chunk in r.iter_content(9000):
@@ -27,4 +28,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

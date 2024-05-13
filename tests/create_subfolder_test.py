@@ -30,5 +30,6 @@ class TestCreateDirectory(unittest.TestCase):
         self.assertEqual(Path(folder_path).parent, Path.home() / custom_user_folder)
         shutil.rmtree(Path(folder_path).parent)
 
+
 if __name__ == '__main__':
     unittest.main()

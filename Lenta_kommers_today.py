@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 
 from tools.create_subfolder import create_directory
 from tools.downloader import image_downloader
-from tools.get_file_name import file_name
+from tools.get_file_name import ImageNamer
+
 from tools.get_html import get_html
 from tools.lenta_ru_time import lenta_ru_time_converter
 from tools.system_notification import notification
@@ -13,7 +14,7 @@ from tools.system_notification import notification
 
 def main():
     yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-    folder = create_directory(f'Kommersant/LentaRU')
+    folder = create_directory('Kommersant/LentaRU')
     number = 10
 
     while True:
@@ -24,14 +25,14 @@ def main():
         for i in result['matches']:
             if lenta_ru_time_converter(i['pubdate']) == yesterday:  # today:
                 count += 1
-                photograf = i['text'].split('/ Коммерсантъ')[0][6:].strip()
+                photograph = i['text'].split('/ Коммерсантъ')[0][6:].strip()
 
                 # если под фото нед подписи и взята первая строка текста, то пропускаем снимок
-                if len(photograf) < 25:
+                if len(photograph) < 25:
                     image_url = i['image_url']
-                    print(photograf, image_url, lenta_ru_time_converter(i['pubdate']))
+                    print(photograph, image_url, lenta_ru_time_converter(i['pubdate']))
 
-                    image_name = f"{file_name(image_url)}_{photograf}.JPG"
+                    image_name = f"{ImageNamer().file_name(image_url)}_{photograph}.JPG"
 
                     image_downloader(image_url, folder, image_name)
 

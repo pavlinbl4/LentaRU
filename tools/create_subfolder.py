@@ -10,3 +10,6 @@ def create_directory(folder: str, user_folder="Documents") -> str:
     folder_path.mkdir(parents=True, exist_ok=True)
 
     return str(folder_path)
+
+if __name__ == '__main__':
+    print(create_directory('Kommersant/LentaRU'))

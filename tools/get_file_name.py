@@ -1,8 +1,21 @@
+import datetime
 import re
-def file_name(image_url):
-    pattern = r'2023\d+'
-    return re.search(pattern, image_url).group()
+from datetime import date
+
+
+class ImageNamer:
+    def __init__(self):
+        today_year = str(date.today().strftime('%Y'))
+        self.pattern = rf'{today_year}\d+'
+
+    def file_name(self, image_url):
+        match = re.search(self.pattern, image_url)
+        if match:
+            return match.group()
+        else:
+            return None
 
 
 if __name__ == '__main__':
-    print(file_name('icdn.lenta.ru/images/2023/09/07/12/20230907122611781/detail_03a36d0dca24fdef2b3d56c2ca27d587.jpg'))
+    example_image_url = 'http://example.com/image_2024145.jpg'
+    print(ImageNamer().file_name(example_image_url))
